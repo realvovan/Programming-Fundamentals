@@ -2,7 +2,7 @@
     Done by:
     Student: Hordiienko Volodymyr
     Group: 123:2
-    Practice 1.5
+    Practice 1.4
 */
 
 #include "iostream"
