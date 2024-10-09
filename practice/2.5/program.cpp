@@ -115,7 +115,7 @@ void displayAvailableCars(const vector<Car> cars) {
     if(isEmpty) cout << "No cars available to rent\n";
 }
 
-void rentCar(vector<Car> &cars, vector<Car> &rentedCars) {
+void rentCar(vector<Car> &cars, vector<Car*> &rentedCars) {
     vector<int> rentableCarsIndices;
     string brand,model;
     cout << "Please enter the brand name and model of the car you'd like to rent: ";
@@ -130,7 +130,7 @@ void rentCar(vector<Car> &cars, vector<Car> &rentedCars) {
         return;
     } else if(rentableCarsIndices.size() == 1) {
         cars[rentableCarsIndices[0]].IsAvailable = false;
-        rentedCars.push_back(cars[rentableCarsIndices[0]]);
+        rentedCars.push_back(&cars[rentableCarsIndices[0]]);
     } else {
         cout << "There are multiple " << brand << " " << model << "s available. Please choose which one you'd like to rent\n";
         for(int i = 0; i < rentableCarsIndices.size(); i++) {
@@ -143,16 +143,37 @@ void rentCar(vector<Car> &cars, vector<Car> &rentedCars) {
             cin >> choice;
         }
         cars[rentableCarsIndices[choice - 1]].IsAvailable = false;
-        rentedCars.push_back(cars[rentableCarsIndices[choice - 1]]);
+        rentedCars.push_back(&cars[rentableCarsIndices[choice - 1]]);
     }
     cout << "Success! You have rented a " << brand << " " << model << "\n";
 }
 
-void returnCar() {}
+void returnCar(vector<Car*> &rentedCars) {
+    if(rentedCars.size() == 0) {
+        cout << "You do not have cars to be returned\n";
+        return;
+    }
+    cout << "Please choose which car you'd like to return:\n";
+    for(int i = 0; i < rentedCars.size(); i++) {
+        cout << (i+1) << ". " << rentedCars[i]->GetInfo() << "\n";
+    }
+    int choice;
+    cin >> choice;
+    while(choice < 1 || choice > rentedCars.size()) {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+    rentedCars[choice - 1]->IsAvailable = true;
+    cout << "Successfully returned a " << rentedCars[choice - 1]->Brand << " " << rentedCars[choice - 1]->Model << "\n";
+    //not sure if this is how you dispose of a pointer properly
+    //never used pointers before lol
+    rentedCars[choice - 1] = nullptr;
+    rentedCars.erase(rentedCars.begin() + choice - 1);
+}
 
 void findMostExpensiveCar(vector<Car> cars) {
     vector<Car> expensiveCars;
-    float maxPrice = cars[0].RentalPricePerDay;
+    float maxPrice = 0; //price cannot be less or equal to zero
     for(Car car : cars) {
         if(!car.IsAvailable) continue;
         if(car.RentalPricePerDay > maxPrice) {
@@ -163,14 +184,13 @@ void findMostExpensiveCar(vector<Car> cars) {
             expensiveCars.push_back(car);
         }
     }
-    if(expensiveCars.size() == 1) cout << "The most expensive available car is:\n";
-    else cout << "The most available expensive cars are\n";
+    if(expensiveCars.size() == 0) cout << "There are no cars available!\n";
+    else if(expensiveCars.size() == 1) cout << "The most expensive available car is:\n";
+    else cout << "The most available expensive cars are:\n";
     for(Car car : expensiveCars) {
         cout << car.GetInfo() << "\n";
     }
 }
-
-void removeCar() {}
 
 void clearConsole() {
     #ifdef _WIN32
@@ -185,12 +205,12 @@ int main() {
     vector<Car> cars {
         Car("Honda","Civic",2005,6.9),
         Car("Toyta","Corolla",2018,4.20),
-        Car("BMW","X5",1955,65),
-        Car("Mercedes","X5",1955,65),
-        Car("test","X5",1955,65),
-        Car("Honda","Civic",1966,4.20),
+        // Car("BMW","X5",1955,65),
+        // Car("Mercedes","X5",1955,65),
+        // Car("test","X5",1955,65),
+        // Car("Honda","Civic",1966,4.20),
         };
-    vector<Car> rentedCars;
+    vector<Car*> rentedCars;
     bool isRunning = true;
     while(isRunning) {
         int n;
@@ -217,8 +237,8 @@ int main() {
                 cout << "You have not rented any cars\n";
             } else {
                 cout << "Cars you've rented:\n";
-                for(Car car : rentedCars) {
-                    cout << car.GetInfo() << "\n";
+                for(Car* car : rentedCars) {
+                    cout << car->GetInfo() << "\n";
                 }
             }
             break;
@@ -226,7 +246,7 @@ int main() {
             rentCar(cars,rentedCars);
             break;
         case 5:
-            //todo: add this
+            returnCar(rentedCars);
             break;
         case 6:
             findMostExpensiveCar(cars);
