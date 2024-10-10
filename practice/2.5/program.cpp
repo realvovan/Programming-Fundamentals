@@ -103,7 +103,7 @@ void intputCars(vector<Car> &cars) {
     }
 }
 
-void displayAvailableCars(const vector<Car> cars) {
+void displayAvailableCars(const vector<Car> &cars) {
     cout << "Available cars:\n";
     bool isEmpty = true;
     for(Car car : cars) {
@@ -145,6 +145,7 @@ void rentCar(vector<Car> &cars, vector<Car*> &rentedCars) {
         cars[rentableCarsIndices[choice - 1]].IsAvailable = false;
         rentedCars.push_back(&cars[rentableCarsIndices[choice - 1]]);
     }
+    rentableCarsIndices.clear();
     cout << "Success! You have rented a " << brand << " " << model << "\n";
 }
 
@@ -165,13 +166,13 @@ void returnCar(vector<Car*> &rentedCars) {
     }
     rentedCars[choice - 1]->IsAvailable = true;
     cout << "Successfully returned a " << rentedCars[choice - 1]->Brand << " " << rentedCars[choice - 1]->Model << "\n";
-    //not sure if this is how you dispose of a pointer properly
+    //hopefully won't cause a memory leak 🙏🙏
     //never used pointers before lol
     rentedCars[choice - 1] = nullptr;
     rentedCars.erase(rentedCars.begin() + choice - 1);
 }
 
-void findMostExpensiveCar(vector<Car> cars) {
+void findMostExpensiveCar(const vector<Car> &cars) {
     vector<Car> expensiveCars;
     float maxPrice = 0; //price cannot be less or equal to zero
     for(Car car : cars) {
@@ -190,6 +191,7 @@ void findMostExpensiveCar(vector<Car> cars) {
     for(Car car : expensiveCars) {
         cout << car.GetInfo() << "\n";
     }
+    expensiveCars.clear();
 }
 
 void clearConsole() {
@@ -205,10 +207,7 @@ int main() {
     vector<Car> cars {
         Car("Honda","Civic",2005,6.9),
         Car("Toyta","Corolla",2018,4.20),
-        // Car("BMW","X5",1955,65),
-        // Car("Mercedes","X5",1955,65),
-        // Car("test","X5",1955,65),
-        // Car("Honda","Civic",1966,4.20),
+        Car("BMW","X5",2000,65),
         };
     vector<Car*> rentedCars;
     bool isRunning = true;
@@ -233,6 +232,7 @@ int main() {
             displayAvailableCars(cars);
             break;
         case 3:
+            //display all rented cars
             if(rentedCars.empty()) {
                 cout << "You have not rented any cars\n";
             } else {
@@ -252,8 +252,31 @@ int main() {
             findMostExpensiveCar(cars);
             break;
         case 7:
-            //todo: add this
+            {
+            //delete a car from the list of cars
+            vector<int> indices;
+            cout << "Which car would you like to remove:\n";
+            for(int i = 0; i < cars.size(); i++) {
+                if(cars[i].IsAvailable) {
+                    indices.push_back(i);
+                    cout << indices.size() << ". " << cars[i].GetInfo() << "\n";
+                }
+            }
+            if(indices.size() == 0) {
+                cout << "There are no cars available!\n";
+                break;
+            }
+            int choice;
+            cin >> choice;
+            while(choice < 1 || choice > indices.size()) {
+                cout << "Please enter a valid choice: ";
+                cin >> choice;
+            }
+            cout << "Successfully removed " << cars[indices[choice - 1]].Brand << " " << cars[indices[choice - 1]].Model << "\n";
+            cars.erase(cars.begin() + indices[choice - 1]);
+            indices.clear();
             break;
+            }
         case 8:
             clearConsole();
             break;
