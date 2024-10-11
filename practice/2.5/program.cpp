@@ -41,7 +41,6 @@ struct Car {
         this->Year = year;
         this->RentalPricePerDay = rentalPricePerDay;
     }
-
     string GetInfo() {
         return "Brand: " + this->Brand
             + ", Model: " + this->Model
@@ -51,7 +50,6 @@ struct Car {
     }
 };
 
-
 int getCurrentYear() {
     //istg i hate c++ why is this the way to get the current year
     //at least that's what i found on the internet
@@ -60,13 +58,14 @@ int getCurrentYear() {
 }
 
 string toLower(string str) {
-    string temp = str;
-    for(char &c : temp) {
+    for(char &c : str) {
         c = std::tolower(c);
     }
-    return temp;
+    return str;
 }
 
+//Prompts the user to input car info that will be added to the list of available cars
+//@param cars: list of cars to be added to
 void intputCars(vector<Car> &cars) {
     int n;
     cout << "How many cars would you like to add? ";
@@ -103,6 +102,8 @@ void intputCars(vector<Car> &cars) {
     }
 }
 
+//prints info about all available cars
+//@param cars: list of all cars
 void displayAvailableCars(const vector<Car> &cars) {
     cout << "Available cars:\n";
     bool isEmpty = true;
@@ -115,6 +116,9 @@ void displayAvailableCars(const vector<Car> &cars) {
     if(isEmpty) cout << "No cars available to rent\n";
 }
 
+//lets the user rent an available car, adding the pointer to it to the list of rented cars
+//@param cars: list of all cars
+//@param rentedCars: list of pointers to rented cars
 void rentCar(vector<Car> &cars, vector<Car*> &rentedCars) {
     vector<int> rentableCarsIndices;
     string brand,model;
@@ -149,6 +153,8 @@ void rentCar(vector<Car> &cars, vector<Car*> &rentedCars) {
     cout << "Success! You have rented a " << brand << " " << model << "\n";
 }
 
+//lets the user return a rented car
+//@param rentedCars: list of pointers to rented cars
 void returnCar(vector<Car*> &rentedCars) {
     if(rentedCars.size() == 0) {
         cout << "You do not have cars to be returned\n";
@@ -172,6 +178,8 @@ void returnCar(vector<Car*> &rentedCars) {
     rentedCars.erase(rentedCars.begin() + choice - 1);
 }
 
+//prints info about the most expesive available car(s)
+//@param cars: list of all cars
 void findMostExpensiveCar(const vector<Car> &cars) {
     vector<Car> expensiveCars;
     float maxPrice = 0; //price cannot be less or equal to zero
