@@ -136,6 +136,8 @@ void rentCar(vector<Car> &cars, vector<Car*> &rentedCars) {
         cars[rentableCarsIndices[0]].IsAvailable = false;
         rentedCars.push_back(&cars[rentableCarsIndices[0]]);
     } else {
+        //if there are multiple cars with the same brand and model,
+        //let the user choose which one they want to rent
         cout << "There are multiple " << brand << " " << model << "s available. Please choose which one you'd like to rent\n";
         for(int i = 0; i < rentableCarsIndices.size(); i++) {
             cout << (i+1) << ". " << cars[rentableCarsIndices[i]].GetInfo() << "\n";
