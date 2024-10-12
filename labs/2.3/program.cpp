@@ -8,9 +8,9 @@
 #include "iostream"
 #include "string"
 #include "stack"
+#include "algorithm" //for rstd::remove_if
 
 using std::cout;
-using std::cin;
 using std::stack;
 using std::string;
 
@@ -95,7 +95,8 @@ float processPostfix(const string &expression) {
 
 int main() {
     string infix;
-    cin >> infix;
+    std::getline(std::cin, infix);
+    infix.erase(std::remove_if(infix.begin(),infix.end(), isspace),infix.end()); //removes whitespaces
     try {
         string postfix = infixToPostfix(infix);
         cout << "Respective postfix expression: " << postfix << "\n";
