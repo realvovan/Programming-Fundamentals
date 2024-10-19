@@ -23,7 +23,6 @@ bool isValidString(const string &str) {
             str[i] == '{'
             || str[i] == '}'
             || static_cast<unsigned char>(str[i]) > 127 //check if the character is in the standard ASCII table
-            || static_cast<unsigned char>(str[i] < 0)
         ) return false;
     }
     return true;
